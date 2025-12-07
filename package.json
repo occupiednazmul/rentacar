@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
-    "start": "node api/index.js",
-    "deploy": "NODE_ENV=production tsup && vercel --prod"
+    "start": "tsup && node api/index.js",
+    "deploy": "tsup && vercel --prod"
   },
   "repository": {
     "type": "git",

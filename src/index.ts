@@ -3,7 +3,11 @@ import appConfig from './config.js'
 import app from './app.js'
 
 // CONFIGURATION VARIABLES
-const { port, nodeEnv } = appConfig
+const {
+  port,
+  nodeEnv,
+  db: { dbUrl }
+} = appConfig
 
 // RUN APP
 app.listen(port, function () {
