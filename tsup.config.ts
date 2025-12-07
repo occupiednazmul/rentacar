@@ -1,10 +1,10 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/server.ts'],
+  entry: ['src/index.ts'],
   format: ['esm'],
-  target: 'node20',
-  outDir: 'dist',
+  target: 'node24',
+  outDir: process.env.NODE_ENV === 'production' ? 'api' : 'dist',
   clean: true,
   sourcemap: true,
   dts: false,

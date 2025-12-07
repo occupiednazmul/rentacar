@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsup",
-    "start": "node dist/server.js"
+    "start": "node api/index.js",
+    "deploy": "NODE_ENV=production tsup && vercel --prod"
   },
   "repository": {
     "type": "git",

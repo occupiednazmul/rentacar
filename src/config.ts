@@ -1,11 +1,18 @@
-// MODULES
+// MODULE
 import dotenv from 'dotenv'
 
 // INITIATE ENVIRONMENTS
 dotenv.config()
 
-// CONFIGURATIONS
-export const config = {
-  nodeEnv: process.env.NODE_ENV || 'development',
-  port: Number(process.env.PORT) || 3000
+// ENVIRONMENTS
+const nodeEnv = process.env.NODE_ENV || 'development'
+const port = process.env.PORT ? Number(process.env.PORT) : 8000
+
+// CONFIGURATIONS OBJECT
+const appConfig = {
+  nodeEnv,
+  port
 }
+
+// EXPORT
+export default appConfig
