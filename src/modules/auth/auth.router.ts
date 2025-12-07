@@ -5,10 +5,10 @@ import { signIn, signUp } from './auth.controller.js'
 // AUTH ROUTER
 const authRouter = Router()
 
-// POST /api/v1/auth/signup  (Public)
+// POST /api/v1/auth/signup
 authRouter.post('/signup', signUp)
 
-// POST /api/v1/auth/signin  (Public)
+// POST /api/v1/auth/signin
 authRouter.post('/signin', signIn)
 
 // EXPORT

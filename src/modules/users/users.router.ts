@@ -8,13 +8,13 @@ import { getUsers, updateUser, deleteUser } from './users.controller.js'
 // USER ROUTER
 const userRouter = Router()
 
-// GET /api/v1/users  (Admin only)
+// GET /api/v1/users
 userRouter.get('/', authVerify('admin'), getUsers)
 
-// PUT /api/v1/users/:userId  (Admin or own profile)
+// PUT /api/v1/users/:userId
 userRouter.put('/:userId', authVerify(['admin', 'customer']), updateUser)
 
-// DELETE /api/v1/users/:userId  (Admin only)
+// DELETE /api/v1/users/:userId
 userRouter.delete('/:userId', authVerify('admin'), deleteUser)
 
 // EXPORT
