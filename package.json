@@ -1,13 +1,13 @@
 {
   "name": "rentacar",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
     "start": "tsup && node api/index.js",
-    "deploy": "tsup && vercel --prod"
+    "deploy": "vercel --prod"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/occupiednazmul/rentacar#readme",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "tsup": "^8.5.1",
@@ -32,8 +34,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.16.3"
   }
 }
