@@ -42,7 +42,7 @@ export async function getAllVehicles(
 }
 
 // GET SINGLE VEHICLE
-export async function getVehicleById(
+export async function getAVehicle(
   req: Request,
   res: Response,
   next: NextFunction
