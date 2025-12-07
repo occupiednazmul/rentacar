@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 
 // LOCAL IMPORTS
 import {
-  getAllVehicles,
+  getVehicles,
   createVehicle,
   updateVehicleById,
   hasActiveBookingsForVehicle,
@@ -12,13 +12,13 @@ import {
 import { badRequest } from '../../utils/errors.js'
 
 // GET VEHICLES
-export async function getVehicles(
+export async function getAllVehicles(
   _req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const vehicles = await getAllVehicles()
+    const vehicles = await getVehicles()
 
     return res.status(200).json({
       success: true,
@@ -31,7 +31,7 @@ export async function getVehicles(
 }
 
 // CREATE VEHICLE
-export async function createVehicleController(
+export async function createAVehicle(
   req: Request,
   res: Response,
   next: NextFunction
@@ -87,7 +87,7 @@ export async function createVehicleController(
 }
 
 // UPDATE VEHICLE
-export async function updateVehicleController(
+export async function updateAVehicle(
   req: Request,
   res: Response,
   next: NextFunction
@@ -164,7 +164,7 @@ export async function updateVehicleController(
 }
 
 // DELETE VEHICLE
-export async function deleteVehicleController(
+export async function deleteAVehicle(
   req: Request,
   res: Response,
   next: NextFunction

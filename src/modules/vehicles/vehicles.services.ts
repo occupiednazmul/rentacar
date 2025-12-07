@@ -13,7 +13,7 @@ export type VehicleSummary = {
 }
 
 // GET ALL VEHICLES
-export async function getAllVehicles(): Promise<VehicleSummary[]> {
+export async function getVehicles(): Promise<VehicleSummary[]> {
   const result = await pool.query<VehicleSummary>(
     `SELECT
         id,

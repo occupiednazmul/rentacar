@@ -1,6 +1,6 @@
 // LOCAL IMPORTS
 import pool from '../../utils/db.js'
-import type { UserRole, UserRow } from '../auth/auth.services.js'
+import type { UserRole } from '../auth/auth.services.js'
 
 // USER SUMMARY
 export type UserSummary = {

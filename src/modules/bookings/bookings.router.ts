@@ -1,35 +1,31 @@
-// MODULES
-import { Request, Response, Router } from 'express'
+// src/modules/bookings/bookings.router.ts
 
-// USER ROUTER
+// MODULES
+import { Router } from 'express'
+
+// LOCAL IMPORTS
+import { authVerify } from '../../middlewares/auth.middleware.js'
+import {
+  createABooking,
+  getAllBookings,
+  updateABooking
+} from './bookings.controller.js'
+
+// BOOKINGS ROUTER
 const bookingsRouter = Router()
 
-// POST /api/v1/bookings  (Customer/Admin)
-bookingsRouter.post('/', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Create booking not implemented yet'
-  })
-})
+// POST /api/v1/bookings  (Customer or Admin)
+bookingsRouter.post('/', authVerify(['admin', 'customer']), createABooking)
 
 // GET /api/v1/bookings  (Role-based)
-bookingsRouter.get('/', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Get bookings not implemented yet'
-  })
-})
+bookingsRouter.get('/', authVerify(['admin', 'customer']), getAllBookings)
 
 // PUT /api/v1/bookings/:bookingId  (Role-based)
-bookingsRouter.put('/:bookingId', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Update booking not implemented yet'
-  })
-})
+bookingsRouter.put(
+  '/:bookingId',
+  authVerify(['admin', 'customer']),
+  updateABooking
+)
 
 // EXPORT
 export default bookingsRouter
