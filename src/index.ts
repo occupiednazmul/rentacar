@@ -19,7 +19,7 @@ async function start() {
       console.log(`Server is running on port ${port} in ${nodeEnv} mode`)
     })
   } catch (error) {
-    console.error(`CHECK SERVER, FAILED TO START`)
+    console.error('Failed to start server', error)
     process.exit(1)
   }
 }

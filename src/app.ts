@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express'
 // LOCAL IMPORTS
 import appConfig from './config.js'
 import routes from './routes.js'
-import { globalErrorHandler, notFoundHandler } from './utils/errors.js'
+import { globalErrorsHandler, notFoundHandler } from './utils/errors.js'
 
 // API VERSION
 const { apiVersion } = appConfig
@@ -32,7 +32,7 @@ routes.forEach(function (route) {
 app.use(notFoundHandler)
 
 // GLOBAL ERROR HANDLER (last middleware)
-app.use(globalErrorHandler)
+app.use(globalErrorsHandler)
 
 // EXPORTS
 export default app

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "api",
+    "rootDir": "./src",
+    "outDir": "./api",
     "module": "nodenext",
     "target": "esnext",
     "sourceMap": true,

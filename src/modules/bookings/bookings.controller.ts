@@ -103,7 +103,7 @@ export async function createABooking(
 
 // GET BOOKINGS
 export async function getAllBookings(
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
@@ -170,7 +170,7 @@ export async function getAllBookings(
 
 // UPDATE BOOKING
 export async function updateABooking(
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
