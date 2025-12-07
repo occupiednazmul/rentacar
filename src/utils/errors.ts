@@ -1,14 +1,25 @@
 // MODULES
 import { NextFunction, Request, Response } from 'express'
 
+// BAD REQUEST
+export function badRequest(res: Response, message: string, error: string) {
+  return res.status(400).json({
+    success: false,
+    message,
+    error
+  })
+}
+
 // UNAUTHORIZED ACCESS
 export function unauthorized(
   res: Response,
-  message = 'Check your email or password'
+  message = 'Authentication failed',
+  error = 'Check your email or password'
 ) {
   return res.status(401).json({
     success: false,
-    message
+    message,
+    error
   })
 }
 
@@ -22,7 +33,12 @@ export function notFoundHandler(req: Request, res: Response) {
 }
 
 // GLOBAL ERROR HANDLER
-export function globalErrorHandler(err: any, req: Request, res: Response) {
+export function globalErrorHandler(
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   console.error('GLOBAL ERROR HANDLER:', err)
 
   const status = err?.statusCode || err?.status || 500

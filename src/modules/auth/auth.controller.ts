@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 // LOCAL IMPORTS
-import { unauthorized } from '../../utils/errors.js'
+import { badRequest, unauthorized } from '../../utils/errors.js'
 import { registerUser, authenticateUser, UserRole } from './auth.services.js'
 
 // SIGN UP
@@ -11,10 +11,11 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
     const { name, email, password, phone, role } = req.body
 
     if (!name || !email || !password || !phone || !role) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields'
-      })
+      return badRequest(
+        res,
+        'Missing required fields',
+        'name, email, password, phone, role are required'
+      )
     }
 
     const user = await registerUser({
@@ -40,10 +41,11 @@ export async function signIn(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body
 
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing email or password'
-      })
+      return badRequest(
+        res,
+        'Missing email or password',
+        'Both email and password are required'
+      )
     }
 
     const authResult = await authenticateUser({ email, password })

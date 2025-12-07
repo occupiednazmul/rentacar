@@ -1,35 +1,21 @@
 // MODULES
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
+
+// LOCAL IMPORTS
+import { authVerify } from '../../middlewares/auth.middleware.js'
+import { getUsers, updateUser, deleteUser } from './users.controller.js'
 
 // USER ROUTER
 const userRouter = Router()
 
 // GET /api/v1/users  (Admin only)
-userRouter.get('/', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Get all users not implemented yet'
-  })
-})
+userRouter.get('/', authVerify('admin'), getUsers)
 
-// PUT /api/v1/users/:userId  (Admin or own)
-userRouter.put('/:userId', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Update user not implemented yet'
-  })
-})
+// PUT /api/v1/users/:userId  (Admin or own profile)
+userRouter.put('/:userId', authVerify(['admin', 'customer']), updateUser)
 
 // DELETE /api/v1/users/:userId  (Admin only)
-userRouter.delete('/:userId', (req: Request, res: Response) => {
-  // TODO: replace with controller
-  res.status(501).json({
-    success: false,
-    message: 'Delete user not implemented yet'
-  })
-})
+userRouter.delete('/:userId', authVerify('admin'), deleteUser)
 
 // EXPORT
 export default userRouter

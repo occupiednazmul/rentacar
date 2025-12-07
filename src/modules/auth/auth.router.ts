@@ -2,7 +2,7 @@
 import { Request, Response, Router } from 'express'
 import { signIn, signUp } from './auth.controller.js'
 
-// USER ROUTER
+// AUTH ROUTER
 const authRouter = Router()
 
 // POST /api/v1/auth/signup  (Public)
