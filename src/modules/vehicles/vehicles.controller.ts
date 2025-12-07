@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 // LOCAL IMPORTS
 import {
   getVehicles,
+  getVehicleById as findVehicleById,
   createVehicle,
   updateVehicleById,
   hasActiveBookingsForVehicle,
@@ -20,15 +21,59 @@ export async function getAllVehicles(
   try {
     const vehicles = await getVehicles()
 
+    const sanitized = vehicles.map(function (vehicle) {
+      const { is_active, ...safeVehicle } = vehicle
+      return safeVehicle
+    })
+
     const message =
-      vehicles.length === 0
+      sanitized.length === 0
         ? 'No vehicles found'
         : 'Vehicles retrieved successfully'
 
     return res.status(200).json({
       success: true,
       message,
-      data: vehicles
+      data: sanitized
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+// GET SINGLE VEHICLE
+export async function getVehicleById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const idParam = Number(req.params.vehicleId)
+
+    if (Number.isNaN(idParam)) {
+      return badRequest(
+        res,
+        'Invalid vehicle ID',
+        'Vehicle ID must be a number'
+      )
+    }
+
+    const vehicle = await findVehicleById(idParam)
+
+    if (!vehicle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vehicle not found',
+        errors: 'Vehicle does not exist'
+      })
+    }
+
+    const { is_active, ...safeVehicle } = vehicle
+
+    return res.status(200).json({
+      success: true,
+      message: 'Vehicle retrieved successfully',
+      data: safeVehicle
     })
   } catch (err) {
     return next(err)
@@ -81,10 +126,12 @@ export async function createAVehicle(
       availability_status
     })
 
+    const { is_active, ...safeVehicle } = vehicle
+
     return res.status(201).json({
       success: true,
       message: 'Vehicle created successfully',
-      data: vehicle
+      data: safeVehicle
     })
   } catch (err) {
     return next(err)
@@ -158,10 +205,12 @@ export async function updateAVehicle(
       return badRequest(res, 'Vehicle not found', 'Vehicle does not exist')
     }
 
+    const { is_active: _omit, ...safeVehicle } = updated
+
     return res.status(200).json({
       success: true,
       message: 'Vehicle updated successfully',
-      data: updated
+      data: safeVehicle
     })
   } catch (err) {
     return next(err)

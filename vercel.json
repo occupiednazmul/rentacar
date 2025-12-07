@@ -5,5 +5,6 @@
       "source": "/api/(.*)",
       "destination": "/api"
     }
-  ]
+  ],
+  "crons": [{ "path": "/api/internal/auto-return", "schedule": "*/15 * * * *" }]
 }

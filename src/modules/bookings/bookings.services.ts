@@ -441,3 +441,62 @@ export async function markBookingReturned(bookingId: number): Promise<{
     client.release()
   }
 }
+
+// AUTOMATIC RETURN OF OVERDUE BOOKINGS
+export async function autoReturnOverdueBookings(): Promise<void> {
+  const client = await pool.connect()
+
+  try {
+    await client.query('BEGIN')
+
+    const overdue = await client.query<{
+      id: number
+      vehicle_id: number
+    }>(`
+      SELECT id, vehicle_id
+      FROM bookings
+      WHERE status = 'active'
+        AND rent_end_date < CURRENT_DATE
+      FOR UPDATE
+    `)
+
+    if (overdue.rowCount === 0) {
+      await client.query('COMMIT')
+      return
+    }
+
+    const bookingIds = overdue.rows.map(function (row) {
+      return row.id
+    })
+    const vehicleIds = overdue.rows.map(function (row) {
+      return row.vehicle_id
+    })
+
+    await client.query(
+      `
+      UPDATE bookings
+      SET status = 'returned',
+          updated_at = NOW()
+      WHERE id = ANY($1::int[])
+    `,
+      [bookingIds]
+    )
+
+    await client.query(
+      `
+      UPDATE vehicles
+      SET availability_status = 'available',
+          updated_at = NOW()
+      WHERE id = ANY($1::int[])
+    `,
+      [vehicleIds]
+    )
+
+    await client.query('COMMIT')
+  } catch (err) {
+    await client.query('ROLLBACK')
+    throw err
+  } finally {
+    client.release()
+  }
+}

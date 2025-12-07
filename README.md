@@ -1,34 +1,19 @@
 # Rent A Car API
 
-Backend API for a vehicle rental system with authentication, role-based access (admin/customer), vehicles inventory, and bookings management.
+Backend for managing vehicle rentals with JWT auth, role-based access (admin/customer), vehicle inventory, and bookings with automatic price and availability updates.
 
-## Features
-- JWT authentication with bcrypt password hashing
-- Admin and customer role permissions enforced in middleware
-- Vehicles CRUD with availability tracking
-- Bookings with price calculation and vehicle status updates
-- Users management with safeguards against deleting records that have active bookings
-- Auto table creation on startup (via `initDb`)
-- Fully typed TypeScript codebase, bundled with `tsup`
+- Live API: https://localrentacar.vercel.app/api  
+- GitHub repo: https://github.com/occupiednazmul/rentacar
 
 ## Tech Stack
-- Node.js + TypeScript (ESM, NodeNext)
+- Node.js + TypeScript (ESM)
 - Express 5
-- PostgreSQL (via `pg`)
-- JWT (`jsonwebtoken`) and `bcryptjs`
+- PostgreSQL (pg)
+- JWT (jsonwebtoken) and bcryptjs
+- Bundled with tsup
 
-## Getting Started
-### Prerequisites
-- Node.js 20+ (targets `node24` in tsup)
-- PostgreSQL database URL
-
-### Installation
-```bash
-npm install
-```
-
-### Environment Variables
-Create a `.env` in the project root:
+## Environment Setup (create `.env` before running or deploying)
+Create a `.env` in the project root with the required values:
 ```
 NODE_ENV=development
 PORT=8000
@@ -38,58 +23,54 @@ JWT_SECRET=replace_me
 JWT_EXPIRES_IN=86400
 SALT_ROUNDS=10
 ```
+- For local dev, keep `NODE_ENV=development`.  
+- For deployment, use production values (new `JWT_SECRET`, production `POSTGRES_URL`, desired `PORT`).
 
-### Run
-- Dev (watch): `npm run dev`
-- Build: `npm run build`
-- Start (build then run): `npm start`
+## Local Development
+1) Install: `npm install`  
+2) Run dev (watch): `npm run dev`  
+3) Build: `npm run build` (outputs to `api/`)  
+4) Start built bundle: `npm start`
 
-On boot the app will create the `users`, `vehicles`, and `bookings` tables if they do not exist.
+The app auto-creates the `users`, `vehicles`, and `bookings` tables on startup if they do not exist.
 
-## API
-- Base URL: `/api`
-- Versioned prefix: `/api/v1`
-- Routes mount: `auth`, `users`, `vehicles`, `bookings`
+## Local Testing Guide
+- No automated tests are shipped; use Postman/cURL.  
+- Example sanity checks (adjust `PORT` as needed):
+  - Health: `curl http://localhost:8000/api`  
+  - Sign up: `curl -X POST http://localhost:8000/api/v1/auth/signup -H "Content-Type: application/json" -d '{"name":"John","email":"john@example.com","password":"secret123","phone":"01712345678","role":"customer"}'`
+  - Sign in: `curl -X POST http://localhost:8000/api/v1/auth/signin -H "Content-Type: application/json" -d '{"email":"john@example.com","password":"secret123"}'`
+  - Authenticated calls: include `Authorization: Bearer <jwt>` header.
 
-For full request/response specs see `API_REFERENCE.md`. Highlights:
+## Routes and Expected Results
+All responses follow the structures in `API_REFERENCE.md`.
 
-| Method | Endpoint | Access | Notes |
-| ------ | -------- | ------ | ----- |
-| POST | `/api/v1/auth/signup` | Public | Register user |
-| POST | `/api/v1/auth/signin` | Public | Login, receive JWT |
-| GET | `/api/v1/vehicles` | Public | List vehicles |
-| GET | `/api/v1/vehicles/:vehicleId` | Public | Vehicle detail |
-| POST | `/api/v1/vehicles` | Admin | Create vehicle |
-| PUT | `/api/v1/vehicles/:vehicleId` | Admin | Update vehicle |
-| DELETE | `/api/v1/vehicles/:vehicleId` | Admin | Delete vehicle (no active bookings) |
-| GET | `/api/v1/users` | Admin | List users |
-| PUT | `/api/v1/users/:userId` | Admin/Own | Update profile/role |
-| DELETE | `/api/v1/users/:userId` | Admin | Delete user (no active bookings) |
-| POST | `/api/v1/bookings` | Admin/Customer | Create booking, auto price & status |
-| GET | `/api/v1/bookings` | Role-based | Admin sees all, customer sees own |
-| PUT | `/api/v1/bookings/:bookingId` | Role-based | Customer cancel, admin mark returned |
+- Auth
+  - `POST /api/v1/auth/signup` → 201, returns created user (id, name, email, phone, role).
+  - `POST /api/v1/auth/signin` → 200, returns JWT token and user.
+- Vehicles
+  - `GET /api/v1/vehicles` → 200, list of vehicles (or empty list with “No vehicles found”).
+  - `GET /api/v1/vehicles/:vehicleId` → 200 with vehicle; 404 if not found.
+  - `POST /api/v1/vehicles` (admin) → 201 with created vehicle.
+  - `PUT /api/v1/vehicles/:vehicleId` (admin) → 200 with updated vehicle.
+  - `DELETE /api/v1/vehicles/:vehicleId` (admin) → 200 on delete; 400 if active bookings block deletion.
+- Users
+  - `GET /api/v1/users` (admin) → 200 list of users.
+  - `PUT /api/v1/users/:userId` (admin or own) → 200 with updated user; 403 if customer edits another user.
+  - `DELETE /api/v1/users/:userId` (admin) → 200 on delete; 400 if active bookings block deletion.
+- Bookings
+  - `POST /api/v1/bookings` (customer/admin) → 201 with booking and vehicle price info.
+  - `GET /api/v1/bookings` (role-based) → admin sees all; customer sees own.
+  - `PUT /api/v1/bookings/:bookingId` (role-based) → customer can cancel active future bookings; admin can mark active bookings as returned; auto-updates vehicle availability.
 
-## Project Structure
-```
-src/
-  app.ts            // Express app setup
-  index.ts          // Server entry, DB init
-  config.ts         // Env config
-  middlewares/      // Auth middleware
-  modules/
-    auth/           // Auth routes/controllers/services
-    users/          // User management
-    vehicles/       // Vehicle inventory
-    bookings/       // Booking logic
-  utils/            // DB, errors, tokens, password helpers
-  types/            // Global typings
-```
+## Deployment (Vercel)
+- `vercel.json` rewrites `/api/*` to `/api`, so no extra routing setup is needed.
+- Steps:
+  1) Set the same env vars in Vercel (`POSTGRES_URL`, `JWT_SECRET`, etc.).  
+  2) Deploy with `npm run deploy` (uses `vercel --prod`) or connect the GitHub repo to Vercel for auto-deploys.  
+  3) Vercel will build (`tsup`) and serve the bundled API from the `api/` output.
 
-## Deployment
-- Build artifacts output to `api/`
-- `vercel.json` rewrites `/api/*` to `/api` for Vercel serverless hosting
-
-## Troubleshooting
-- Ensure `POSTGRES_URL` is reachable and SSL settings align with your environment.
-- JWT issues: confirm `JWT_SECRET` matches the token issuer, and `Authorization: Bearer <token>` header is present on protected routes.
-- If tables are missing, restart the server to trigger `initDb`.
+## Submission Checklist
+- Live deployment link included (see above).
+- GitHub repository link included.
+- README documents features, setup, env requirements, routes, and deployment steps as required by the submission guide.

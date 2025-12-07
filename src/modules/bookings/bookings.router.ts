@@ -1,5 +1,3 @@
-// src/modules/bookings/bookings.router.ts
-
 // MODULES
 import { Router } from 'express'
 

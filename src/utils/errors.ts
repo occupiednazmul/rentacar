@@ -42,10 +42,10 @@ export function globalErrorsHandler(
   console.error('GLOBAL ERROR HANDLER:', err)
 
   const status = err?.statusCode || err?.status || 500
-  const message = err?.message || 'Internal server error'
 
   return res.status(status).json({
     success: false,
-    message
+    message: `Error happened for: ${req.originalUrl}`,
+    error: err?.message || 'Internal server error'
   })
 }

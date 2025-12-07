@@ -1,5 +1,3 @@
-// src/modules/bookings/bookings.controller.ts
-
 // MODULES
 import { Request, Response, NextFunction } from 'express'
 
@@ -11,7 +9,8 @@ import {
   getBookingsForCustomer,
   getBookingWithVehicle,
   cancelBooking,
-  markBookingReturned
+  markBookingReturned,
+  autoReturnOverdueBookings
 } from './bookings.services.js'
 
 // CREATE BOOKING
@@ -85,11 +84,13 @@ export async function createABooking(
 
     const { vehicle, ...booking } = result
 
+    const { created_at: _c, updated_at: _u, ...safeBooking } = booking
+
     return res.status(201).json({
       success: true,
       message: 'Booking created successfully',
       data: {
-        ...booking,
+        ...safeBooking,
         vehicle: {
           vehicle_name: vehicle.vehicle_name,
           daily_rent_price: vehicle.daily_rent_price
@@ -108,6 +109,8 @@ export async function getAllBookings(
   next: NextFunction
 ) {
   try {
+    await autoReturnOverdueBookings()
+
     const currentUser = req.user
 
     if (!currentUser) {

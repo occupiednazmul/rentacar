@@ -1,13 +1,12 @@
-// src/modules/vehicles/vehicles.routes.ts
-
 // MODULES
 import { Router } from 'express'
 
 // LOCAL IMPORTS
 import { authVerify } from '../../middlewares/auth.middleware.js'
 import {
-  getAllVehicles,
   createAVehicle,
+  getAVehicle,
+  getAllVehicles,
   updateAVehicle,
   deleteAVehicle
 } from './vehicles.controller.js'
@@ -17,6 +16,9 @@ const vehiclesRouter = Router()
 
 // GET /api/v1/vehicles
 vehiclesRouter.get('/', getAllVehicles)
+
+// GET /api/v1/vehicles/:vehicleId
+vehiclesRouter.get('/:vehicleId', getAVehicle)
 
 // POST /api/v1/vehicles
 vehiclesRouter.post('/', authVerify('admin'), createAVehicle)

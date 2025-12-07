@@ -26,9 +26,12 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
       role: role as UserRole
     })
 
+    const { created_at, ...publicUser } = user
+
     return res.status(201).json({
       success: true,
-      data: user
+      message: 'User registered successfully',
+      data: publicUser
     })
   } catch (err) {
     return next(err)
@@ -55,13 +58,14 @@ export async function signIn(req: Request, res: Response, next: NextFunction) {
     }
 
     const { token, user } = authResult
+    const { created_at, ...publicUser } = user
 
     return res.json({
       success: true,
       message: 'Login successful',
       data: {
         token,
-        user
+        user: publicUser
       }
     })
   } catch (err) {
