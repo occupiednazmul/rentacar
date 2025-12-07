@@ -1,6 +1,7 @@
 // LOCAL IMPORTS
 import appConfig from './config.js'
 import app from './app.js'
+import { initDb } from './utils/db.js'
 
 // CONFIGURATION VARIABLES
 const {
@@ -9,7 +10,19 @@ const {
   db: { dbUrl }
 } = appConfig
 
-// RUN APP
-app.listen(port, function () {
-  console.log(`Server is running on port ${port} in ${nodeEnv} mode`)
-})
+// SERVER
+async function start() {
+  try {
+    await initDb()
+
+    app.listen(port, function () {
+      console.log(`Server is running on port ${port} in ${nodeEnv} mode`)
+    })
+  } catch (error) {
+    console.error(`CHECK SERVER, FAILED TO START`)
+    process.exit(1)
+  }
+}
+
+// START SERVER
+start()
